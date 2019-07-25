@@ -41,6 +41,6 @@ async def debug_info(ctx):
     voice_clients: {vc}
     """.format(
         vc=bot.voice_clients
-    ))
+    )))
 
 bot.run(token)
