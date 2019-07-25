@@ -20,8 +20,11 @@ async def on_message(ctx):
 
     if "ポン" in ctx.content:
         await ctx.channel.send('ポンにゃ！')
-
-    bot.process_commands(ctx)
+    
+    try:
+        await bot.process_commands(ctx)
+    except Exception:
+        await ctx.channel.send(f'```\n{traceback.format_exc()}\n```')
 
 @bot.event
 async def on_command_error(ctx, error):
