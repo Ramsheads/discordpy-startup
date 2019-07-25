@@ -70,7 +70,7 @@ async def connect(ctx):
         """))
         
 @bot.command()
-async def disconnect(ctx)
+async def disconnect(ctx):
     #VoiceClient disconnect
     global players
     for player in players:
