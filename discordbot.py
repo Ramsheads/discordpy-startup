@@ -57,9 +57,10 @@ async def connect(ctx):
     # VoiceClient connect
     global players
     author = ctx.message.author
+    await ctx.channel.send("author: {}".format(author))
     channel = author.voice.voice_channel
     ch_name = None
-    if voice_channel != None:
+    if channel != None:
         ch_name = channel.name
         vc = await bot.join_voice_channel(ch_name)
         player = vc.create_ffmpeg_player(
