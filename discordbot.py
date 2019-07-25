@@ -57,9 +57,11 @@ async def connect(ctx):
     # VoiceClient connect
     global players
     author = ctx.message.author
-    channel = author.voice_channel
+    channel = author.voice.voice_channel
+    ch_name = None
     if voice_channel != None:
-        vc = await bot.join_voice_channel(channel)
+        ch_name = channel.name
+        vc = await bot.join_voice_channel(ch_name)
         player = vc.create_ffmpeg_player(
             PON_WAV, after=lambda: print("Done play Pon"))
         players.append(player)
