@@ -57,8 +57,9 @@ async def connect(ctx):
     # VoiceClient connect
     global players
     author = ctx.message.author
-    await ctx.channel.send("author: {}\n{}\nvoice:\n{}\nchannel:\n{}".format(
-        author, dir(author), dir(author.voice), dir(author.voice.channel)))
+    await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
+    await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
+        dir(author.voice), dir(author.voice.channel)))
     channel = author.voice.channel
     ch_name = None
     if channel != None:
