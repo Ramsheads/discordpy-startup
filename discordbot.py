@@ -23,8 +23,9 @@ async def on_message(ctx):
     
     try:
         await bot.process_commands(ctx)
-    except Exception:
-        await ctx.channel.send(f'```\n{traceback.format_exc()}\n```')
+    except Exception as e:
+        await ctx.channel.send(
+                "Ponnya Chain raised Exception:\n\t{}".format(e))
 
 @bot.event
 async def on_command_error(ctx, error):
