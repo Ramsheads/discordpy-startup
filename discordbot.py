@@ -97,8 +97,10 @@ async def debug_info(ctx):
         return
     await ctx.send(tw.dedent("""
     voice_clients: {vc}
+    source: {src} {src_dir}
     """.format(
         vc=bot.voice_clients,
+        src=SOURCE, src_dir=dir(SOURCE)
     )))
 
 bot.run(token)
