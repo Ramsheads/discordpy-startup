@@ -60,6 +60,7 @@ async def connect(ctx):
     await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
     await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
         dir(author.voice), dir(author.voice.channel)))
+    await ctx.channel.send("bot:\n{}".format(dir(bot)))
     channel = author.voice.channel
     ch_name = None
     if channel != None:
