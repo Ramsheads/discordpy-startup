@@ -41,6 +41,7 @@ async def on_message(ctx):
                     voice_client.play(SOURCE,
                             after=lambda e: print("ERROR on message: {}".format(e)))
                     SOURCE.cleanup()
+                    PON_WAV_FILE.seek(0)
                 except Exception as e:
                     await ctx.channel.send("ERROR on message: {}".format(e))
     
