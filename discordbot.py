@@ -37,8 +37,11 @@ async def on_message(ctx):
         # if voice client already connected, say ポンにゃ！
         if is_voice_connected():
             for voice_client in bot.voice_clients:
-                voice_client.play(SOURCE,
-                        after=lambda e: print("ERROR on message: {}".format(e)))
+                try:
+                    voice_client.play(SOURCE,
+                            after=lambda e: print("ERROR on message: {}".format(e)))
+                except Exception as e:
+                    await ctx.channel.send("ERROR on message: {}".format(e))
     
     try:
         await bot.process_commands(ctx)
