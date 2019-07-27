@@ -8,7 +8,8 @@ COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
-SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(PON_WAV))
+with open(PON_WAV, "rb") as f:
+    SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(f))
 IS_DEBUG=True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
@@ -35,16 +36,17 @@ async def on_message(ctx):
         await ctx.channel.send('ポンにゃ！')
         # if voice client already connected, say ポンにゃ！
         if is_voice_connected():
-            if IS_DEBUG:
-                await ctx.channel.send("Audio Play")
-                ctx.voice_client.play(SOURCE,
-                        after=lambda e: print("ERROR: {}".format(e)))
             for voice_client in bot.voice_clients:
-                voice_client.play(SOURCE,
-                        after=lambda e: print("ERROR: {}".format(e)))
+                try:
+                    voice_client.play(SOURCE,
+                            after=lambda e: print("ERROR on message: {}".format(e)))
+                except Exception as e:
+                    await ctx.channel.send("ERROR on message: {}".format(e))
     
     try:
         await bot.process_commands(ctx)
+    except KeyboardInterrupt:
+        exit()
     except Exception as e:
         await ctx.channel.send(
                 "Ponnya Chan raised Exception:\n\t{}".format(e))
@@ -61,24 +63,22 @@ async def ping(ctx):
 async def connect(ctx):
     # VoiceClient connect
     author = ctx.message.author
-    if IS_DEBUG:
-        try:
-            await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
-            await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
-                dir(author.voice), dir(author.voice.channel)))
-            await ctx.channel.send("bot:\n{}".format(dir(bot)))
-        except:
-            pass
     try:
         channel = author.voice.channel
     except:
         channel = None
     if channel != None:
         try:
-            voice_client = await channel.connect()
-            bot.voice_clients.append(voice_client)
-        except:
-            pass
+            if is_voice_connected():
+                for vc in bot.voice_clients:
+                    vc.move_to(channel)
+            else:
+                voice_client = await channel.connect()
+                bot.voice_clients.append(voice_client)
+        except KeyboardInterrupt:
+            exit()
+        except Exception as e:
+            print("ERROR on connect: {}".format(e))
     else:
         await ctx.channel.send(tw.dedent("""
         どのVoiceチャンネルに行けばいいかわからないにゃ！
