@@ -8,6 +8,8 @@ COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="pon.wav"
 token = os.environ[TOKEN_ENVIRON]
+with open(PON_WAV, "r") as f:
+    SOURCE=discord.PCMAudio(f)
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
@@ -15,10 +17,8 @@ bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 # on_member_join(member): ポンにゃテロ
 # discord.on_voice_state_update(member, before, after):　来たにゃ！
 
-players = []
-
 def is_voice_connected():
-    if players:
+    if bot.voice_clients:
         return True
     return False
 
@@ -28,7 +28,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(ctx):
-    global players
     if ctx.author == bot.user:
         return
 
@@ -36,8 +35,8 @@ async def on_message(ctx):
         await ctx.channel.send('ポンにゃ！')
         # if voice client already connected, say ポンにゃ！
         if is_voice_connected():
-            for player in players:
-                player.start()
+            for voice_client in bot.voice_clients:
+                voice_client.play(SOURCE, after=lambda: print("Done"))
     
     try:
         await bot.process_commands(ctx)
@@ -56,7 +55,6 @@ async def ping(ctx):
 @bot.command()
 async def connect(ctx):
     # VoiceClient connect
-    global players
     author = ctx.message.author
     await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
     await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
@@ -67,10 +65,8 @@ async def connect(ctx):
     except:
         channel = None
     if channel != None:
-        await channel.connect()
-        player = channel.create_ffmpeg_player(
-            PON_WAV, after=lambda: print("Done play Pon"))
-        players.append(player)
+        voice_client = await channel.connect()
+        bot.voice_clients.append(voice_client)
     else:
         await ctx.channel.send(tw.dedent("""
         どのVoiceチャンネルに行けばいいかわからないにゃ！
@@ -80,19 +76,15 @@ async def connect(ctx):
 @bot.command()
 async def disconnect(ctx):
     #VoiceClient disconnect
-    global players
-    for player in players:
-        await player.disconnect()
-    players = []
+    for voice_client in bot.voice_clients:
+        await voice_client.disconnect()
 
 @bot.command()
 async def debug_info(ctx):
     await ctx.send(tw.dedent("""
     voice_clients: {vc}
-    players: {players}
     """.format(
         vc=bot.voice_clients,
-        players=players
     )))
 
 bot.run(token)
