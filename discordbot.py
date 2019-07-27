@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 import os
 import traceback
@@ -6,9 +7,9 @@ import textwrap as tw
 COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="pon.wav"
-bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 token = os.environ[TOKEN_ENVIRON]
-# VoiceClientつくって bot.voice_clients に入れる？
+
+bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
 # Yet implemented event handler
 # on_member_join(member): ポンにゃテロ
@@ -61,12 +62,13 @@ async def connect(ctx):
     await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
         dir(author.voice), dir(author.voice.channel)))
     await ctx.channel.send("bot:\n{}".format(dir(bot)))
-    channel = author.voice.channel
-    ch_name = None
+    try:
+        channel = author.voice.channel
+    except:
+        channel = None
     if channel != None:
-        ch_name = channel.name
-        vc = await bot.join_voice_channel(ch_name)
-        player = vc.create_ffmpeg_player(
+        await channel.connect()
+        player = channel.create_ffmpeg_player(
             PON_WAV, after=lambda: print("Done play Pon"))
         players.append(player)
     else:
