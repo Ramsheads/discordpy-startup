@@ -8,9 +8,7 @@ COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
-SOURCE=None
-with open(PON_WAV, "r") as f:
-    SOURCE=discord.PCMAudio(f)
+SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(PON_WAV))
 IS_DEBUG=True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
@@ -39,8 +37,11 @@ async def on_message(ctx):
         if is_voice_connected():
             if IS_DEBUG:
                 await ctx.channel.send("Audio Play")
+                ctx.voice_client.play(SOURCE,
+                        after=lambda e: print("ERROR: {}".format(e)))
             for voice_client in bot.voice_clients:
-                voice_client.play(SOURCE, after=lambda: print("Done"))
+                voice_client.play(SOURCE,
+                        after=lambda e: print("ERROR: {}".format(e)))
     
     try:
         await bot.process_commands(ctx)
