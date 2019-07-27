@@ -8,7 +8,9 @@ COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
-IS_DEBUG=False
+PON_WAV_FILE = open(PON_WAV, "rb")
+SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(PON_WAV_FILE))
+IS_DEBUG=True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
@@ -36,10 +38,7 @@ async def on_message(ctx):
         if is_voice_connected():
             for voice_client in bot.voice_clients:
                 try:
-                    with open(PON_WAV, "rb") as f:
-                        SOURCE=discord.PCMVolumeTransformer(
-                                discord.PCMAudio(f))
-                        voice_client.play(SOURCE,
+                    voice_client.play(SOURCE,
                             after=lambda e: print("ERROR on message: {}".format(e)))
                 except Exception as e:
                     await ctx.channel.send("ERROR on message: {}".format(e))
@@ -98,8 +97,10 @@ async def debug_info(ctx):
         return
     await ctx.send(tw.dedent("""
     voice_clients: {vc}
+    source: {src} {src_dir}
     """.format(
         vc=bot.voice_clients,
+        src=SOURCE, src_dir=dir(SOURCE)
     )))
 
 bot.run(token)
