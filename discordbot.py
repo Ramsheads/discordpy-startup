@@ -56,17 +56,23 @@ async def ping(ctx):
 async def connect(ctx):
     # VoiceClient connect
     author = ctx.message.author
-    await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
-    await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
-        dir(author.voice), dir(author.voice.channel)))
-    await ctx.channel.send("bot:\n{}".format(dir(bot)))
+    try:
+        await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
+        await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
+            dir(author.voice), dir(author.voice.channel)))
+        await ctx.channel.send("bot:\n{}".format(dir(bot)))
+    except:
+        pass
     try:
         channel = author.voice.channel
     except:
         channel = None
     if channel != None:
-        voice_client = await channel.connect()
-        bot.voice_clients.append(voice_client)
+        try:
+            voice_client = await channel.connect()
+            bot.voice_clients.append(voice_client)
+        except:
+            pass
     else:
         await ctx.channel.send(tw.dedent("""
         どのVoiceチャンネルに行けばいいかわからないにゃ！
