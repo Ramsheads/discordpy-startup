@@ -38,10 +38,12 @@ async def on_message(ctx):
         if is_voice_connected():
             for voice_client in bot.voice_clients:
                 try:
-                    voice_client.play(SOURCE,
-                            after=lambda e: print("ERROR on message: {}".format(e)))
+                    if voice_client.is_playing():
+                        voice_clinet.stop()
                     SOURCE.cleanup()
                     PON_WAV_FILE.seek(0)
+                    voice_client.play(SOURCE,
+                            after=lambda e: print("ERROR on message: {}".format(e)))
                 except Exception as e:
                     await ctx.channel.send("ERROR on message: {}".format(e))
     
