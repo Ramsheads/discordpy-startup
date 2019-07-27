@@ -8,8 +8,8 @@ COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
-with open(PON_WAV, "rb") as f:
-    SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(f))
+PON_WAV_FILE = open(PON_WAV, "rb")
+SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(PON_WAV_FILE))
 IS_DEBUG=True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
