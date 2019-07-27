@@ -40,6 +40,7 @@ async def on_message(ctx):
                 try:
                     voice_client.play(SOURCE,
                             after=lambda e: print("ERROR on message: {}".format(e)))
+                    SOURCE.cleanup()
                 except Exception as e:
                     await ctx.channel.send("ERROR on message: {}".format(e))
     
