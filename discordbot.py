@@ -10,6 +10,7 @@ PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
 with open(PON_WAV, "r") as f:
     SOURCE=discord.PCMAudio(f)
+IS_DEBUG=True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
@@ -35,6 +36,8 @@ async def on_message(ctx):
         await ctx.channel.send('ポンにゃ！')
         # if voice client already connected, say ポンにゃ！
         if is_voice_connected():
+            if IS_DEBUG:
+                await ctx.channel.send("Audio Play")
             for voice_client in bot.voice_clients:
                 voice_client.play(SOURCE, after=lambda: print("Done"))
     
@@ -56,13 +59,14 @@ async def ping(ctx):
 async def connect(ctx):
     # VoiceClient connect
     author = ctx.message.author
-    try:
-        await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
-        await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
-            dir(author.voice), dir(author.voice.channel)))
-        await ctx.channel.send("bot:\n{}".format(dir(bot)))
-    except:
-        pass
+    if IS_DEBUG:
+        try:
+            await ctx.channel.send("author: {}\n{}".format(author, dir(author)))
+            await ctx.channel.send("voice:\n{}\nchannel:\n{}".format(
+                dir(author.voice), dir(author.voice.channel)))
+            await ctx.channel.send("bot:\n{}".format(dir(bot)))
+        except:
+            pass
     try:
         channel = author.voice.channel
     except:
@@ -87,6 +91,8 @@ async def disconnect(ctx):
 
 @bot.command()
 async def debug_info(ctx):
+    if not IS_DEBUG:
+        return
     await ctx.send(tw.dedent("""
     voice_clients: {vc}
     """.format(
