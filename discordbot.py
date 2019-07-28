@@ -57,7 +57,7 @@ def is_voice_connected():
 async def on_ready():
     print("Start Ponnya Chan...")
 
-def __play(voice_clinet, source, wav, msg):
+def __play(voice_client, source, wav, msg):
     if voice_client.is_playing():
         voice_clinet.stop()
     source.cleanup()
