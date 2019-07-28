@@ -6,10 +6,40 @@ import textwrap as tw
 
 COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
-PON_WAV="ponn.wav"
 token = os.environ[TOKEN_ENVIRON]
+PON_WAV="ponn.wav"
 PON_WAV_FILE = open(PON_WAV, "rb")
-SOURCE=discord.PCMVolumeTransformer(discord.PCMAudio(PON_WAV_FILE), volume=0.25)
+PON_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(PON_WAV_FILE), volume=0.25)
+JOIN_WAV_FILE="join.wav"
+JOIN_WAV_FILE = open(JOIN_WAV, "rb")
+JOIN_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(JOIN_WAV_FILE), volume=0.25)
+RON_WAV="ron.wav"
+RON_WAV_FILE = open(RON_WAV, "rb")
+RON_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(RON_WAV_FILE), volume=0.25)
+KAN_WAV="kan.wav"
+KAN_WAV_FILE = open(KAN_WAV, "rb")
+KAN_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(KAN_WAV_FILE), volume=0.25)
+CHEE_WAV="chee.wav"
+CHEE_WAV_FILE = open(CHEE_WAV, "rb")
+CHEE_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(CHEE_WAV_FILE), volume=0.25)
+PEI_WAV="pei.wav"
+PEI_WAV_FILE = open(PEI_WAV, "rb")
+PEI_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(PEI_WAV_FILE), volume=0.25)
+REACH_WAV="reach.wav"
+REACH_WAV_FILE = open(REACH_WAV, "rb")
+REACH_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(REACH_WAV_FILE), volume=0.25)
+TUMO_WAV="tumo.wav"
+TUMO_WAV_FILE = open(TUMO_WAV, "rb")
+TUMO_SOURCE=discord.PCMVolumeTransformer(
+        discord.PCMAudio(TUMO_WAV_FILE), volume=0.25)
+
 IS_DEBUG=False
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
@@ -27,26 +57,58 @@ def is_voice_connected():
 async def on_ready():
     print("Start Ponnya Chan...")
 
+def __play(voice_clinet, source, wav, msg):
+    if voice_client.is_playing():
+        voice_clinet.stop()
+    source.cleanup()
+    wav.seek(0)
+    voice_client.play(source,
+            after=lambda e: print("ERROR {}: {}".format(msg, e)))
+
+def play(source, wav, msg):
+    if is_voice_connected():
+        for voice_client in bot.voice_clients:
+            __play(voice_client, source, wav, msg)
+
 @bot.event
 async def on_message(ctx):
     if ctx.author == bot.user:
         return
 
-    if "ポン" in ctx.content:
+    if "ポン" in ctx.content or
+       "ポーン" in ctx.content:
         await ctx.channel.send('ポンにゃ！')
-        # if voice client already connected, say ポンにゃ！
-        if is_voice_connected():
-            for voice_client in bot.voice_clients:
-                try:
-                    if voice_client.is_playing():
-                        voice_clinet.stop()
-                    SOURCE.cleanup()
-                    PON_WAV_FILE.seek(0)
-                    voice_client.play(SOURCE,
-                            after=lambda e: print("ERROR on message: {}".format(e)))
-                except Exception as e:
-                    await ctx.channel.send("ERROR on message: {}".format(e))
-    
+        play(PON_SOURCE, PON_WAV_FILE, "on_message")
+
+    if "ロン" in ctx.content or
+       "ローン" in ctx.content:
+        await ctx.channel.send('ロンにゃ！')
+        play(RON_SOURCE, RON_WAV_FILE, "on_message")
+
+    if "カン" in ctx.content or
+       "カーン" in ctx.content:
+        await ctx.channel.send('カンにゃ！')
+        play(KAN_SOURCE, KAN_WAV_FILE, "on_message")
+
+    if "チー" in ctx.content:
+        await ctx.channel.send('チーにゃ！')
+        play(CHEE_SOURCE, CHEE_WAV_FILE, "on_message")
+
+    if "北" in ctx.content or
+       "ペイ" in ctx.content or
+       "ペー" in ctx.content:
+        await ctx.channel.send('ぺーにゃ！')
+        play(PEI_SOURCE, PEI_WAV_FILE, "on_message")
+
+    if "リーチ" in ctx.content:
+        await ctx.channel.send('リーチにゃ！')
+        play(REACH_SOURCE, REACH_WAV_FILE, "on_message")
+
+    if "ツモ" in ctx.content or
+       "ツーモ" in ctx.content:
+        await ctx.channel.send('ツモにゃ！')
+        play(TUMO_SOURCE, TUMO_WAV_FILE, "on_message")
+
     try:
         await bot.process_commands(ctx)
     except KeyboardInterrupt:
@@ -54,6 +116,10 @@ async def on_message(ctx):
     except Exception as e:
         await ctx.channel.send(
                 "Ponnya Chan raised Exception:\n\t{}".format(e))
+
+@bot.event
+async def on_member_join(member):
+    play(JOIN_SOURCE, JOIN_WAV_FILE, "on_member_join")
 
 @bot.event
 async def on_command_error(ctx, error):
