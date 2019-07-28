@@ -77,7 +77,10 @@ async def on_message(ctx):
 
     if "ポン" in ctx.content:
         await ctx.channel.send('ポンにゃ！')
-        play(PON_SOURCE, PON_WAV_FILE, "on_message")
+        try:
+            play(PON_SOURCE, PON_WAV_FILE, "on_message")
+        except Exception as e:
+            await ctx.channel.send("ponn error: {}".format(e))
 
     if "ロン" in ctx.content:
         await ctx.channel.send('ロンにゃ！')
