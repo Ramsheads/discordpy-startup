@@ -75,37 +75,31 @@ async def on_message(ctx):
     if ctx.author == bot.user:
         return
 
-    if "ポン" in ctx.content or
-       "ポーン" in ctx.content:
+    if "ポン" or "ぽん" or "ポーン" in ctx.content:
         await ctx.channel.send('ポンにゃ！')
         play(PON_SOURCE, PON_WAV_FILE, "on_message")
 
-    if "ロン" in ctx.content or
-       "ローン" in ctx.content:
+    if "ロン" or "ろん" or "ローン" in ctx.content:
         await ctx.channel.send('ロンにゃ！')
         play(RON_SOURCE, RON_WAV_FILE, "on_message")
 
-    if "カン" in ctx.content or
-       "カーン" in ctx.content:
+    if "カン" or "かん" or "カーン" in ctx.content:
         await ctx.channel.send('カンにゃ！')
         play(KAN_SOURCE, KAN_WAV_FILE, "on_message")
 
-    if "チー" in ctx.content:
+    if "チー" or "ちー" in ctx.content:
         await ctx.channel.send('チーにゃ！')
         play(CHEE_SOURCE, CHEE_WAV_FILE, "on_message")
 
-    if "北" in ctx.content or
-       "ペイ" in ctx.content or
-       "ペー" in ctx.content:
+    if "北" or "ペイ" or "ペー" in ctx.content:
         await ctx.channel.send('ぺーにゃ！')
         play(PEI_SOURCE, PEI_WAV_FILE, "on_message")
 
-    if "リーチ" in ctx.content:
+    if "リーチ" or "りーち" in ctx.content:
         await ctx.channel.send('リーチにゃ！')
         play(REACH_SOURCE, REACH_WAV_FILE, "on_message")
 
-    if "ツモ" in ctx.content or
-       "ツーモ" in ctx.content:
+    if "ツモ" or "つも" or "ツーモ" in ctx.content:
         await ctx.channel.send('ツモにゃ！')
         play(TUMO_SOURCE, TUMO_WAV_FILE, "on_message")
 
