@@ -4,6 +4,7 @@ import os
 import traceback
 import textwrap as tw
 import re
+import time
 
 COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
@@ -58,7 +59,8 @@ class VoiceSource:
     
     def check_play(self, ctx):
         if re.search(self._regex, ctx.content):
-            self.play()
+            if self.bot.voice_clients:
+                self.play()
             return True
         return False
 
@@ -130,38 +132,40 @@ async def on_message(ctx):
     if ctx.author == bot.user:
         return
     
-    try:
-        if vs_pon.check_play(ctx):
-            await ctx.channel.send(vs_pon.msg)
-        elif vs_chee.check_play(ctx):
-            await ctx.channel.send(vs_chee.msg)
-        elif vs_ron.check_play(ctx):
-            await ctx.channel.send(vs_ron.msg)
+    if vs_pon.check_play(ctx):
+        await ctx.channel.send(vs_pon.msg)
+    elif vs_chee.check_play(ctx):
+        await ctx.channel.send(vs_chee.msg)
+    elif vs_ron.check_play(ctx):
+        await ctx.channel.send(vs_ron.msg)
+        clear_all_counter()
+    elif vs_tumo.check_play(ctx):
+        await ctx.channel.send(vs_tumo.msg)
+        clear_all_counter()
+    elif vs_reach.check_play(ctx):
+        await ctx.channel.send(vs_reach.msg)
+    elif vs_kan.check_play(ctx):
+        await ctx.channel.send(vs_kan.msg)
+        if is_sukan():
+            time.sleep(0.5)
+            await ctx.channel.send(vs_sukan.msg)
+            vs_sukan.play()
             clear_all_counter()
-        elif vs_tumo.check_play(ctx):
-            await ctx.channel.send(vs_tumo.msg)
+    elif vs_pei.check_play(ctx):
+        await ctx.channel.send(vs_pei.msg)
+        if is_suhu():
+            time.sleep(0.5)
+            await ctx.channel.send(vs_suhu.msg)
+            vs_suhu.play()
             clear_all_counter()
-        elif vs_reach.check_play(ctx):
-            await ctx.channel.send(vs_reach.msg)
-        elif vs_kan.check_play(ctx):
-            await ctx.channel.send(vs_kan.msg)
-            if is_sukan():
-                await ctx.channel.send(vs_sukan.msg)
-                vs_sukan.play()
-                clear_all_counter()
-        elif vs_pei.check_play(ctx):
-            await ctx.channel.send(vs_pei.msg)
-            if is_suhu():
-                await ctx.channel.send(vs_suhu.msg)
-                vs_suhu.play()
-                clear_all_counter()
-        else:
+    else:
+        try:
             await bot.process_commands(ctx)
-    except KeyboardInterrupt:
-        exit()
-    except Exception as e:
-        await ctx.channel.send(
-            "Ponnya Chan raised Exception:\n\t{}".format(e))
+        except KeyboardInterrupt:
+            exit()
+        except Exception as e:
+            await ctx.channel.send(
+                "Ponnya Chan raised Exception:\n\t{}".format(e))
 
 @bot.event
 async def on_command_error(ctx, error):
