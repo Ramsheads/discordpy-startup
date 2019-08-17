@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import discord
 from discord.ext import commands
 import os
@@ -8,7 +10,6 @@ import re
 COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 token = os.environ[TOKEN_ENVIRON]
-#TODO: Need to make them class
 
 class VoiceSource:
     def __init__(self, bot, path, default_vol=0.25, pattern="", msg=""):
@@ -97,6 +98,8 @@ vs_reach = VoiceSource(bot,
 vs_tumo = VoiceSource(bot,
     "tumo.wav", pattern=r'ツモ|つも', msg='ツモにゃ！')
 
+print("create bot and voice sources")
+
 # Yet implemented event handler
 # on_member_join(member): ポンにゃテロ
 # discord.on_voice_state_update(member, before, after):　来たにゃ！
@@ -135,39 +138,40 @@ def clear_all_counter():
 
 @bot.event
 async def on_message(ctx):
-    global SUKAN_COUNT
     if ctx.author == bot.user:
         return
     
+    vs_pon.check_play(ctx)
+
+    vs_chee.check_play(ctx)
+
+    if vs_ron.check_play(ctx):
+        clear_all_counter()
+
+    if vs_tumo.check_play(ctx):
+        clear_all_counter()
+
+    vs_reach.check_play(ctx)
+
+    if vs_kan.check_play(ctx):
+        if is_sukan():
+            vs_sukan.say(ctx)
+            vs_sukan.play()
+            clear_all_counter()
+    
+    if vs_pei.check_play(ctx):
+        if is_suhu():
+            vs_suhu.say(ctx)
+            vs_suhu.play()
+            clear_all_counter()
+    
     try:
-        if vs_pon.check_play(ctx):
-            pass
-        elif vs_chee.check_play(ctx):
-            pass
-        elif vs_ron.check_play(ctx):
-            clear_all_counter()
-        elif vs_tumo.check_play(ctx):
-            clear_all_counter()
-        elif vs_reach.check_play(ctx):
-            pass
-        elif vs_kan.check_play(ctx):
-            if is_sukan():
-                vs_sukan.say(ctx)
-                vs_sukan.play()
-                clear_all_counter()
-        elif vs_pei.check_play(ctx):
-            if is_suhu():
-                vs_suhu.say(ctx)
-                vs_suhu.play()
-                clear_all_counter()
-        else:
-            try:
-                await bot.process_commands(ctx)
-            except KeyboardInterrupt:
-                exit()
+        await bot.process_commands(ctx)
+    except KeyboardInterrupt:
+        exit()
     except Exception as e:
         await ctx.channel.send(
-                "Ponnya Chan raised Exception:\n\t{}".format(e))
+            "Ponnya Chan raised Exception:\n\t{}".format(e))
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -227,3 +231,4 @@ async def debug_info(ctx):
     )))
 
 bot.run(token)
+print("bot running")
