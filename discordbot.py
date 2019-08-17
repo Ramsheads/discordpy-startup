@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import discord
 from discord.ext import commands
 import os
@@ -58,18 +56,9 @@ class VoiceSource:
                 after=lambda e: print(
                     "ERROR {}: {}".format(self.path, e)))
     
-    def say(self, ctx):
-        if self.msg:
-            return await ctx.channel.send(self.msg)
-    
     def check_play(self, ctx):
         if re.search(self._regex, ctx.content):
-            try:
-                self.say(ctx)
-                self.play()
-            except Exception as e:
-                return await ctx.channel.send(
-                    "ERROR on {}: {}".format(ctx.content, e))
+            self.play()
             return True
         return False
 
@@ -141,32 +130,33 @@ async def on_message(ctx):
     if ctx.author == bot.user:
         return
     
-    vs_pon.check_play(ctx)
-
-    vs_chee.check_play(ctx)
-
-    if vs_ron.check_play(ctx):
-        clear_all_counter()
-
-    if vs_tumo.check_play(ctx):
-        clear_all_counter()
-
-    vs_reach.check_play(ctx)
-
-    if vs_kan.check_play(ctx):
-        if is_sukan():
-            vs_sukan.say(ctx)
-            vs_sukan.play()
-            clear_all_counter()
-    
-    if vs_pei.check_play(ctx):
-        if is_suhu():
-            vs_suhu.say(ctx)
-            vs_suhu.play()
-            clear_all_counter()
-    
     try:
-        await bot.process_commands(ctx)
+        if vs_pon.check_play(ctx):
+            await ctx.channel.send(vs_pon.msg)
+        elif vs_chee.check_play(ctx):
+            await ctx.channel.send(vs_chee.msg)
+        elif vs_ron.check_play(ctx):
+            await ctx.channel.send(vs_ron.msg)
+            clear_all_counter()
+        elif vs_tumo.check_play(ctx):
+            await ctx.channel.send(vs_tumo.msg)
+            clear_all_counter()
+        elif vs_reach.check_play(ctx):
+            await ctx.channel.send(vs_reach.msg)
+        elif vs_kan.check_play(ctx):
+            await ctx.channel.send(vs_kan.msg)
+            if is_sukan():
+                await ctx.channel.send(vs_sukan.msg)
+                vs_sukan.play()
+                clear_all_counter()
+        elif vs_pei.check_play(ctx):
+            await ctx.channel.send(vs_pei.msg)
+            if is_suhu():
+                await ctx.channel.send(vs_suhu.msg)
+                vs_suhu.play()
+                clear_all_counter()
+        else:
+            await bot.process_commands(ctx)
     except KeyboardInterrupt:
         exit()
     except Exception as e:
