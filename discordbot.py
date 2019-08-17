@@ -60,7 +60,7 @@ class VoiceSource:
     
     def say(self, ctx):
         if self.msg:
-            await ctx.channel.send(self.msg)
+            return await ctx.channel.send(self.msg)
     
     def check_play(self, ctx):
         if re.search(self._regex, ctx.content):
@@ -68,7 +68,7 @@ class VoiceSource:
                 self.say(ctx)
                 self.play()
             except Exception as e:
-                await ctx.channel.send(
+                return await ctx.channel.send(
                     "ERROR on {}: {}".format(ctx.content, e))
             return True
         return False
