@@ -103,7 +103,7 @@ keywords = (
     keyword_tumo,
 )
 
-if True:
+if IS_DEBUG:
     for i in keywords:
         print("{} -> {}".format(i, raw_or(i)))
 
