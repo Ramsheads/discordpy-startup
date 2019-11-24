@@ -5,10 +5,25 @@ import traceback
 import textwrap as tw
 import re
 import time
+import jaconv
 
 COMMAND_PREFIX="$$"
 TOKEN_ENVIRON="DISCORD_BOT_TOKEN"
 token = os.environ[TOKEN_ENVIRON]
+
+# util
+hira2hirakata=lambda s: [s, jaconv.hira2kata(s)]
+
+def raw_or(s):
+    if not isinstance(s, (list, tuple)):
+        raise TypeError("Require list or tuple. Receive {}".format(type(s)))
+    ret = r""
+    for i, d in enumerate(s):
+        if (i+1) == len(s):
+            break
+        ret = ret + r"{}|".format(d)
+    ret = ret + r"{}".format(s[-1])
+    return ret
 
 class VoiceSource:
     def __init__(self, bot, path, default_vol=0.25, pattern="", msg=""):
@@ -68,26 +83,54 @@ IS_DEBUG=False
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
-vs_pon = VoiceSource(bot,
-    "ponn.wav", pattern=r'ポン|ぽん', msg='ポンにゃ！')
-vs_ron = VoiceSource(bot,
-    "ron.wav", pattern=r'ロン|ろん', msg='ロンにゃ！')
-vs_kan = VoiceSource(bot,
-    "kan.wav", pattern=r'カン|かん', msg='カンにゃ！')
-vs_sukan = VoiceSource(bot,
-    "sukan.wav", pattern=r'カン|かん', msg='スーカンながれにゃー……')
+# keyword for actions
+keyword_pon=hira2hirakata('ぽん')
+keyword_ron=hira2hirakata('ろん')
+keyword_kan=hira2hirakata('かん')
+keyword_chee=hira2hirakata('ちー')
+keyword_pei=hira2hirakata('ぺー')
+keyword_pei.append('北')
+keyword_reach=hira2hirakata('りーち')
+keyword_tumo=hira2hirakata('つも')
+
+keywords = (
+    keyword_pon,
+    keyword_ron,
+    keyword_kan,
+    keyword_chee,
+    keyword_pei,
+    keyword_reach,
+    keyword_tumo,
+)
+
+if True:
+    for i in keywords:
+        print("{} -> {}".format(i, raw_or(i)))
+
+# variables for actions
+
 SUKAN_COUNT=0
-vs_chee = VoiceSource(bot,
-    "chee.wav", pattern=r'チー|ちー', msg='チーにゃ！')
-vs_pei = VoiceSource(bot,
-    "pei.wav", pattern=r'北|ペー|ぺー', msg='ペーにゃ！')
-vs_suhu = VoiceSource(bot,
-    "suhu.wav", pattern=r'北|ペー|ぺー', msg='スーフーにゃんだにゃー……')
 SUHU_COUNT=0
+
+# voice sources
+vs_pon = VoiceSource(bot,
+    "ponn.wav", pattern=raw_or(keyword_pon), msg='ポンにゃ！')
+vs_ron = VoiceSource(bot,
+    "ron.wav", pattern=raw_or(keyword_ron), msg='ロンにゃ！')
+vs_kan = VoiceSource(bot,
+    "kan.wav", pattern=raw_or(keyword_kan), msg='カンにゃ！')
+vs_sukan = VoiceSource(bot,
+    "sukan.wav", pattern=raw_or(keyword_kan), msg='スーカンながれにゃー……')
+vs_chee = VoiceSource(bot,
+    "chee.wav", pattern=raw_or(keyword_chee), msg='チーにゃ！')
+vs_pei = VoiceSource(bot,
+    "pei.wav", pattern=raw_or(keyword_pei), msg='ペーにゃ！')
+vs_suhu = VoiceSource(bot,
+    "suhu.wav", pattern=raw_or(keyword_pei), msg='スーフーにゃんだにゃー……')
 vs_reach = VoiceSource(bot,
-    "reach.wav", pattern=r'リーチ|りーち', msg='リーチにゃ！')
+    "reach.wav", pattern=raw_or(keyword_reach), msg='リーチにゃ！')
 vs_tumo = VoiceSource(bot,
-    "tumo.wav", pattern=r'ツモ|つも', msg='ツモにゃ！')
+    "tumo.wav", pattern=raw_or(keyword_tumo), msg='ツモにゃ！')
 
 print("create bot and voice sources")
 
