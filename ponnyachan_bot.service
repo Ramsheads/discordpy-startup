@@ -1,0 +1,14 @@
+[Unit]
+Description=Discord Bot for ponnya chan
+After=multi-user.target
+
+[Service]
+Environment="PATH=/bin:/usr/bin:/usr/local/bin"
+Environment=DISCORD_BOT_TOKEN="<input your discord bot token>"
+WorkingDirectory=/path/to/discordpy-startup
+Type=simple
+ExecStart=/path/to/discordpy-startup/discordbot.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
